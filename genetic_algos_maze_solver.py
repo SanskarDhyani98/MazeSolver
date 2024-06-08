@@ -46,32 +46,18 @@ toolbox.register("attr_direction", random.choice, ['U', 'D', 'L', 'R'])
 toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_direction, n=100)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-# def evaluate(individual):
-#     x, y = start
-#     steps = 0  # Initialize steps taken
-#     for move in individual:
-#         steps += 1  # Increment steps at each move
+#EXERCISE
 
-#         # Move up, down, left, or right while checking boundaries
-#         if move == 'U': y = max(0, y - 1)
-#         elif move == 'D': y = min(len(maze) - 1, y + 1)
-#         elif move == 'L': x = max(0, x - 1)
-#         elif move == 'R': x = min(len(maze[0]) - 1, x + 1)
-
-#         # Check if the current position is the end goal
-#         if (x, y) == end:
-#             return (steps,)  # Return the number of steps taken
-
-#         # Check if the current position is a wall
-#         if maze[y][x] == 1:
-#             break  # Hit a wall, break out of the loop
-
-#     # Did not reach the goal, return 100 plus the Manhattan distance to the end
-#     return (100 + abs(end[0] - x) + abs(end[1] - y),)
+#Each path is 100 instructions long, so it doesn't matter whether you reach there after 30 moves, or 90 moves, but it should!
+#We want to prefer the shorter path, right?
+#Edit the evaluation function such that it returns a smaller value for 30 moves, than 90 moves. And individuals who do not reach the end are always returning more than solutions who are.
 
 def evaluate(individual):
     x, y = start
+    steps = 0  # Initialize steps taken
     for move in individual:
+        steps += 1  # Increment steps at each move
+
         # Move up, down, left, or right while checking boundaries
         if move == 'U': y = max(0, y - 1)
         elif move == 'D': y = min(len(maze) - 1, y + 1)
@@ -80,14 +66,34 @@ def evaluate(individual):
 
         # Check if the current position is the end goal
         if (x, y) == end:
-            return (0,)  # Perfect score since we reached the end
+            return (steps,)  # Return the number of steps taken
 
         # Check if the current position is a wall
         if maze[y][x] == 1:
-            break
+            break  # Hit a wall, break out of the loop
 
-    # Return the Manhattan distance to the end point as the score
-    return (abs(end[0] - x) + abs(end[1] - y),)
+    # Did not reach the goal, return 100 plus the Manhattan distance to the end
+    return (100 + abs(end[0] - x) + abs(end[1] - y),)
+
+# def evaluate(individual):
+#     x, y = start
+#     for move in individual:
+#         # Move up, down, left, or right while checking boundaries
+#         if move == 'U': y = max(0, y - 1)
+#         elif move == 'D': y = min(len(maze) - 1, y + 1)
+#         elif move == 'L': x = max(0, x - 1)
+#         elif move == 'R': x = min(len(maze[0]) - 1, x + 1)
+
+#         # Check if the current position is the end goal
+#         if (x, y) == end:
+#             return (0,)  # Perfect score since we reached the end
+
+#         # Check if the current position is a wall
+#         if maze[y][x] == 1:
+#             break
+
+#     # Return the Manhattan distance to the end point as the score
+#     return (abs(end[0] - x) + abs(end[1] - y),)
 
 def custom_mutate(individual, indpb=0.2):
     directions = ['U', 'D', 'L', 'R']
@@ -174,10 +180,4 @@ def run_ga(generations=2000, pop_size=50):
             plot_path(top_individual)
 
 run_ga()
-
-#EXERCISE
-
-#Each path is 100 instructions long, so it doesn't matter whether you reach there after 30 moves, or 90 moves, but it should!
-#We want to prefer the shorter path, right?
-#Edit the evaluation function such that it returns a smaller value for 30 moves, than 90 moves. And individuals who do not reach the end are always returning more than solutions who are.
 
